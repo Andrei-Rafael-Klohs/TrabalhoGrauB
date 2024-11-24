@@ -1,3 +1,11 @@
+/*
+Trabalho do Grau B - Trabalho Prático: Sistema de Gerenciamento de Poções de Alquimia
+Aluno: Andrei Rafael Padilha Klohs
+Curso: Ciências Biológicas (Bacharelado)
+Disciplina: Algoritmos e Programação: Fundamentos
+Objetivo: Desenvolver um sistema de produção de poções
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -72,8 +80,8 @@ void preparar_pocao(int pocao_index)
         if (estoque[idx_ingrediente].quantidade < poções[pocao_index].quantidades[i]) 
         {
             ingredientes_em_falta = 1; //Sendo diferente de zero, tá em falta
-            printf("Não foi possível preparar a poção. Ingredientes em falta:\n");
-            printf("%d. %s: necessário %d %s, disponível %d %s\n", 
+            printf("Não foi possível preparar a poção. Os seguintes ingredientes estão em falta:\n");
+            printf("%d. %s: é necessário %d %s, está disponível %d %s\n", 
                 i + 1, 
                 estoque[idx_ingrediente].nome, 
                 poções[pocao_index].quantidades[i], 
@@ -93,8 +101,8 @@ void preparar_pocao(int pocao_index)
         }
         
         printf("\n");
-        printf("Poção criada com sucesso!\n");
-        printf("Estoque atualizado:\n");
+        printf("Sua poção foi criada com sucesso!\n");
+        printf("Seu estoque foi atualizado:\n");
         consultar_ingredientes();
     }
 }
@@ -107,14 +115,14 @@ void reabastecer_ingrediente()
 
     consultar_ingredientes();
     
-    printf("Digite o número do ingrediente que deseja reabastecer:\n ");
+    printf("Digite o número do ingrediente que deseja abastecer:\n ");
     while (scanf("%d", &ingrediente_index) != 1 || ingrediente_index < 1 || ingrediente_index > 7) 
     {
         printf("Digite um número entre 1 e 7.\n");
         while (getchar() != '\n'); // Limpar o buffer de entrada
     }
 
-    printf("Digite a quantidade a ser adicionada: ");
+    printf("Digite a quantidade a ser colocada: ");
     while (scanf("%d", &quantidade) != 1 || quantidade <= 0) //Como não tem subtração de inventário, não faz sentido permitir números negativos
     {
         printf("Digite um número positivo.\n");
@@ -123,7 +131,7 @@ void reabastecer_ingrediente()
 
     estoque[ingrediente_index - 1].quantidade += quantidade;
     printf("\n");
-    printf("Você reabasteceu o ingrediente!\n");
+    printf("Você reabasteceu o seu ingrediente!\n");
     consultar_ingredientes();
 }
 
@@ -139,7 +147,7 @@ void exibir_menu()
         printf("2. Preparar Pocao\n");
         printf("3. Reabastecer Ingrediente\n");
         printf("4. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opção de 1 a 4: ");
         
         while (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > 4)
         
