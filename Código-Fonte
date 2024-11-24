@@ -1,0 +1,200 @@
+/*
+Trabalho do Grau B - Trabalho Prático: Sistema de Gerenciamento de Poções de Alquimia
+Aluno: Andrei Rafael Padilha Klohs
+Curso: Ciências Biológicas (Bacharelado)
+Disciplina: Algoritmos e Programação: Fundamentos
+Objetivo: Desenvolver um sistema de produção de poções
+*/
+
+#include <stdio.h>
+#include <string.h>
+
+// Struct para ingredientes, conforme repassado pela sora Rossana
+typedef struct 
+{
+    char nome[30];  // Nome do ingrediente
+    int quantidade; // Quantidade atual do ingrediente em estoque
+} Ingrediente;
+
+// Struck para poções, idem
+typedef struct 
+{
+    char nome[30];             // Nome da poção
+    int ingredientes[7];       // Índices dos ingredientes necessários
+    int quantidades[7];        // Quantidades necessárias de cada ingrediente
+} Pocao;
+
+// Array para definir os estoques inicias e quais são os ingredientes, levando em consideração a struct dada no enunciado do trabalho
+Ingrediente estoque[7] = 
+{
+    {"Pó de Fênix", 100}, //Ingrediente | Quantidade inicial
+    {"Essência Celestial", 50},
+    {"Raiz de Dragão", 45},
+    {"Orvalho Lunar", 30},
+    {"Flores secas", 200},
+    {"Elixir amargo", 20},
+    {"Lágrimas de unicórnio", 15}
+};
+
+// Mesmo lance do comentário anterior, mas, para as poções.
+// Coloquei cada ingrediente ao lado da poção para organizar melhor a leitura do código
+//Coloca primeiro o índice do ingrediente, e depois a quantia necessária para a Poção
+// Importante, o índice SEMPRE começa em zero para array
+
+Pocao poções[5] = 
+{
+    {"Poção de Cura", {0, 1, 4, 6}, {30, 20, 20, 10}},  // Pó de Fênix, Essência Celestial, Flores secas, Lágrimas de unicórnio
+    {"Poção Força da Floresta", {3, 2, 4}, {20, 30, 30}}, // Orvalho Lunar, Raiz de Dragão, Flores secas
+    {"Poção Sabedoria da Riqueza", {1, 0}, {30, 50}}, // Essência Celestial, Pó de Fênix
+    {"Poção Sorte no Amor", {3, 4, 6}, {10, 50, 5}}, // Orvalho Lunar, Flores secas, Lágrimas de unicórnio
+    {"Poção Malvada", {5, 2}, {10, 15}} // Elixir amargo, Raiz de Dragão
+};
+
+// Função para consultar os ingredientes disponíveis
+void consultaIngredientes() 
+{
+    printf("\n"); //Só para deixar o código mais bonitinho
+    printf("Ingredientes disponíveis:\n");
+    
+    for (int i = 0; i < 7; i++) 
+    {
+        printf("%d. %s: %d\n", i + 1, estoque[i].nome, estoque[i].quantidade); //Coloca o indice, o nome do ingrediente e a quantidade
+    }
+}
+
+// Função para verificar se os ingredientes necessários estão disponíveis
+int verificaIngredientes(int indice_pocao) 
+{
+    for (int i = 0; i < 7 && poções[indice_pocao].ingredientes[i] != -1; i++) //Usa o -1 para marcar o fim da lista
+    {
+        int indice_ingrediente = poções[indice_pocao].ingredientes[i];
+        
+        if (estoque[indice_ingrediente].quantidade < poções[indice_pocao].quantidades[i]) //caso o estoque seja menor que a quantia necessária para a poção
+        {
+            printf("Não foi possível preparar a poção. Os seguintes ingredientes estão em falta:\n");
+            printf("%d. %s: é necessário %d, e só está disponível %d\n", i + 1, estoque[indice_ingrediente].nome, poções[indice_pocao].quantidades[i], estoque[indice_ingrediente].quantidade); //Puxa o nome, quantia e código do ingrediente que faltou e quanto temos
+            printf("\n");
+            return 0; // Ingredientes em falta
+
+            //Se não entrar dentro do if, simplesmente vai preparar a poção, a função tá mais abaixo
+        }
+    }
+    return 1; // Todos os ingredientes disponíveis
+}
+
+// Função para preparar a poção
+void preparaPocao(int indice_pocao) 
+{
+    if (verificaIngredientes(indice_pocao)) 
+    {
+        for (int i = 0; i < 7 && poções[indice_pocao].ingredientes[i] != -1; i++) //Novamente o -1
+        {
+            int indice_ingrediente = poções[indice_pocao].ingredientes[i];
+            estoque[indice_ingrediente].quantidade -= poções[indice_pocao].quantidades[i]; //Subtrai estoque
+        }
+        
+        printf("\nSua poção foi criada com sucesso!\n");
+        printf("Seu estoque foi atualizado:\n");
+        consultaIngredientes(); //Mostra o estoque depois da preparação
+        printf("\n");
+    }
+}
+
+// Função para reabastecer um ingrediente
+void reabasteceIngrediente() 
+{
+    int indice_ingrediente;
+    int quantidade;
+
+    consultaIngredientes();
+    
+    printf("Digite o número do ingrediente que deseja abastecer:\n ");
+    scanf(" %d", &indice_ingrediente);
+
+    while (indice_ingrediente < 1 || indice_ingrediente > 7) 
+    {
+        printf("Digite um número entre 1 e 7.\n");
+        scanf(" %d", &indice_ingrediente);
+
+        //A verificação se o usuário digitou um número válido mesmo está mais abaixo
+    }
+
+    printf("Digite a quantidade a ser colocada: ");
+    scanf(" %d", &quantidade);
+    while (quantidade <= 0) 
+    {
+        printf("Digite um número positivo.\n");
+        scanf(" %d", &quantidade);
+    }
+
+    estoque[indice_ingrediente - 1].quantidade += quantidade;
+    printf("\nVocê reabasteceu o seu ingrediente!\n");
+    consultaIngredientes();
+}
+
+// Função para exibir o menu e fazer as ações conforme escolha do usuário
+void exibeMenu() 
+{
+    int opcao = 0;
+    int poçãoEscolhida;
+
+    while (opcao != 4) {
+        printf("Menu:\n");
+        printf("1. Consultar Ingredientes Disponíveis\n");
+        printf("2. Preparar Pocao\n");
+        printf("3. Reabastecer Ingrediente\n");
+        printf("4. Sair do programa\n");
+        printf("Escolha uma opção de 1 a 4: ");
+        
+        scanf(" %d", &opcao);
+        while (opcao < 1 || opcao > 4) 
+        {
+            printf("Por favor, escolha uma opção entre 1 à 4.\n");
+            scanf(" %d", &opcao);
+        }
+
+        // Agora faz a sequência de ifs que vai puxando as funções conforme o jogador escolhe
+        if (opcao == 1)
+        {
+            consultaIngredientes();
+        } 
+        else if (opcao == 2) 
+        {
+            printf("\nEscolha a poção que quer fazer:\n");
+            
+            for (int i = 0; i < 5; i++)
+            {
+                printf("%d. %s\n", i + 1, poções[i].nome); // Chama struct
+            }
+            
+            printf("Digite o número da poção: ");
+            
+            // Solicita a entrada do número da poção
+            scanf(" %d", &poçãoEscolhida);
+
+            // Validação da entrada para garantir que o número da poção esteja entre 1 e 5
+            while (poçãoEscolhida < 1 || poçãoEscolhida > 5) 
+            {
+                printf("Dígito inválido, escolha uma poção válida (entre 1 e 5).\n");
+                scanf(" %d", &poçãoEscolhida);
+            }
+
+            // Agora prepara a poção com base no número válido escolhido
+            preparaPocao(poçãoEscolhida - 1);
+        } 
+        else if (opcao == 3) 
+        {
+            reabasteceIngrediente();
+        } 
+        else if (opcao == 4) {
+            printf("Certo, fechando programa, até mais tarde!\n");
+        }
+    }
+}
+
+int main() 
+{
+    // Exibir o menu para o usuário
+    exibeMenu();
+    return 0;
+}
