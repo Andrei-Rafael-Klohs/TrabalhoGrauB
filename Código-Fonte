@@ -54,7 +54,7 @@ Pocao poções[5] =
 void consultaIngredientes() 
 {
     printf("\n"); //Só para deixar o código mais bonitinho
-    printf("Ingredientes disponíveis:\n");
+    printf("Os ingredientes disponíveis são:\n");
     
     for (int i = 0; i < 7; i++) 
     {
@@ -71,7 +71,7 @@ int verificaIngredientes(int indice_pocao)
         
         if (estoque[indice_ingrediente].quantidade < poções[indice_pocao].quantidades[i]) //caso o estoque seja menor que a quantia necessária para a poção
         {
-            printf("Não foi possível preparar a poção. Os seguintes ingredientes estão em falta:\n");
+            printf("Não foi possível preparar a poção, pois os seguintes ingredientes estão em falta:\n");
             printf("%d. %s: é necessário %d, e só está disponível %d\n", i + 1, estoque[indice_ingrediente].nome, poções[indice_pocao].quantidades[i], estoque[indice_ingrediente].quantidade); //Puxa o nome, quantia e código do ingrediente que faltou e quanto temos
             printf("\n");
             return 0; // Ingredientes em falta
@@ -95,7 +95,7 @@ void preparaPocao(int indice_pocao)
         
         printf("\nSua poção foi criada com sucesso!\n");
         printf("Seu estoque foi atualizado:\n");
-        consultaIngredientes(); //Mostra o estoque depois da preparação
+        consultaIngredientes(); //Mostra o estoque depois da preparação, usando a função já preparada lá acima
         printf("\n");
     }
 }
@@ -121,14 +121,14 @@ void reabasteceIngrediente()
 
     printf("Digite a quantidade a ser colocada: ");
     scanf(" %d", &quantidade);
-    while (quantidade <= 0) 
+    while (quantidade <= 0) //Acho que o while é até mais prático que o próprio if para várias coisas
     {
-        printf("Digite um número positivo.\n");
+        printf("Digite um número positivo, por gentileza\n");
         scanf(" %d", &quantidade);
     }
 
     estoque[indice_ingrediente - 1].quantidade += quantidade;
-    printf("\nVocê reabasteceu o seu ingrediente!\n");
+    printf("\nVocê reabasteceu o seu ingrediente!!!\n");
     consultaIngredientes();
 }
 
@@ -138,7 +138,8 @@ void exibeMenu()
     int opcao = 0;
     int poçãoEscolhida;
 
-    while (opcao != 4) {
+    while (opcao != 4) 
+    {
         printf("Menu:\n");
         printf("1. Consultar Ingredientes Disponíveis\n");
         printf("2. Preparar Pocao\n");
@@ -147,7 +148,7 @@ void exibeMenu()
         printf("Escolha uma opção de 1 a 4: ");
         
         scanf(" %d", &opcao);
-        while (opcao < 1 || opcao > 4) 
+        while (opcao < 1 || opcao > 4) // Uma coisa que não tinha nos meus códigos anteriores, é verificar se o usuário não vai mandar um número negativo. Ou seja, é necessário também garantir que ele não aceite numeros menores que o mínimo, e não só os maiores. Deve dar para fazer usando if, mas while é mais rápido
         {
             printf("Por favor, escolha uma opção entre 1 à 4.\n");
             scanf(" %d", &opcao);
@@ -167,15 +168,13 @@ void exibeMenu()
                 printf("%d. %s\n", i + 1, poções[i].nome); // Chama struct
             }
             
-            printf("Digite o número da poção: ");
-            
-            // Solicita a entrada do número da poção
+            printf("Digite o número da poção: "); // Solicita a entrada do número da poção
             scanf(" %d", &poçãoEscolhida);
 
             // Validação da entrada para garantir que o número da poção esteja entre 1 e 5
             while (poçãoEscolhida < 1 || poçãoEscolhida > 5) 
             {
-                printf("Dígito inválido, escolha uma poção válida (entre 1 e 5).\n");
+                printf("Dígito inválido, escolha uma poção válida por favor (entre 1 e 5).\n");
                 scanf(" %d", &poçãoEscolhida);
             }
 
@@ -197,6 +196,7 @@ void exibeMenu()
 int main() 
 {
     // Exibir o menu para o usuário
+    // Explicação pessoal: Tentei diminuir ao máximo o main para testar a modularização usando funções, parece ter dado certo. O código "main" acabou ficando com somente duas linhas, bem simplificado
     exibeMenu();
     return 0;
 }
